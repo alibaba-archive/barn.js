@@ -1,0 +1,32 @@
+{
+  "name": "barn.js",
+  "version": "1.0.0",
+  "description": "scalable and extendable browser db library based on indexeddb.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/teambition/barn.js.git"
+  },
+  "keywords": [
+    "indexeddb",
+    "browser"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/teambition/barn.js/issues"
+  },
+  "homepage": "https://github.com/teambition/barn.js",
+  "devDependencies": {
+    "jasmine-core": "^2.2.0",
+    "karma": "^0.12.31",
+    "karma-babel-preprocessor": "^5.0.1",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.5",
+    "karma-requirejs": "^0.2.2",
+    "requirejs": "^2.1.17"
+  }
+}

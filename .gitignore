@@ -2,6 +2,8 @@
 logs
 *.log
 
+docs/_book
+
 # Runtime data
 pids
 *.pid
