@@ -5,9 +5,9 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Introduction | Barn.JS</title>
+        <title>Migration | Barn.JS</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <meta name="description" content="An full feature indexeddb wrapper.">
+        <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.0">
         
         
@@ -20,8 +20,8 @@
         
     
     
-    <link rel="next" href="./database.html" />
     
+    <link rel="prev" href="./model.html" />
     
 
         
@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="0" data-basepath="." data-revision="Tue Apr 07 2015 08:24:33 GMT+0800 (CST)">
+    <div class="book" data-level="4" data-basepath="." data-revision="Tue Apr 07 2015 08:24:33 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -51,7 +51,7 @@
 
         
     
-        <li class="chapter active" data-level="0" data-path="index.html">
+        <li class="chapter " data-level="0" data-path="index.html">
             
                 
                     <a href="./index.html">
@@ -109,7 +109,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4" data-path="migration.html">
+        <li class="chapter active" data-level="4" data-path="migration.html">
             
                 
                     <a href="./migration.html">
@@ -215,12 +215,47 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="barn-js">Barn.JS</h1>
-<p>An full feature indexeddb wrapper.</p>
-<ul>
-<li>ES6</li>
-<li>Promise</li>
-</ul>
+                        <h1 id="%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB">&#x6570;&#x636E;&#x8FC1;&#x79FB;</h1>
+<p><code>barn.js</code> &#x63D0;&#x4F9B;&#x4E86;&#x975E;&#x5E38;&#x7075;&#x6D3B;&#x7684;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x65B9;&#x6848;&#x3002;</p>
+<h2 id="version-1">version 1</h2>
+<p><code>barn.database</code> &#x65B9;&#x6CD5;&#x9664;&#x4E86;&#x63A5;&#x53D7;&#x6570;&#x636E;&#x5E93;&#x540D;&#x4EE5;&#x5916;&#xFF0C;&#x8FD8;&#x63A5;&#x53D7;&#x4E00;&#x4E2A; <code>version</code> &#x53C2;&#x6570;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x7528;&#x6765;&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x3002; </p>
+<pre><code class="lang-javascript">import * as barn from <span class="hljs-string">&apos;barn&apos;</span>
+
+<span class="hljs-comment">// &#x76EE;&#x524D; today &#x6570;&#x636E;&#x7684; version &#x662F; 1</span>
+<span class="hljs-keyword">var</span> today = barn.database(<span class="hljs-string">&apos;today&apos;</span>, <span class="hljs-number">1</span>)
+
+<span class="hljs-keyword">var</span> schema = <span class="hljs-keyword">new</span> barn.Schema({
+  keyPath: <span class="hljs-string">&apos;id&apos;</span>
+})
+<span class="hljs-keyword">var</span> Event = barn.model(<span class="hljs-string">&apos;event&apos;</span>, schema)
+</code></pre>
+<h2 id="version-2">version 2</h2>
+<p><code>Schema</code> &#x6784;&#x9020;&#x5668;&#x63A5;&#x53D7;&#x4E00;&#x4E2A; <code>onUpgrade</code>&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x57FA;&#x4E8E;&#x5B83;&#x6765;&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x3002;</p>
+<pre><code class="lang-javascript">import * as barn from <span class="hljs-string">&apos;barn&apos;</span>
+
+<span class="hljs-comment">// &#x76EE;&#x524D; today &#x6570;&#x636E;&#x7684; version &#x662F; 1</span>
+<span class="hljs-keyword">var</span> today = barn.database(<span class="hljs-string">&apos;today&apos;</span>, <span class="hljs-number">2</span>)
+
+<span class="hljs-keyword">var</span> schema = <span class="hljs-keyword">new</span> barn.Schema({
+  keyPath: <span class="hljs-string">&apos;id&apos;</span>,
+  indexes: [{
+    name: <span class="hljs-string">&apos;isSync&apos;</span>,
+    keyPath: <span class="hljs-string">&apos;isSync&apos;</span>
+  }],
+  onUpgrade: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> </span>{
+    <span class="hljs-keyword">var</span> store
+    <span class="hljs-keyword">if</span> (event.oldVersion &lt;=<span class="hljs-number">1</span>) {
+      store = event.db.objectStore(<span class="hljs-string">&apos;event&apos;</span>)
+      store.createIndex(<span class="hljs-string">&apos;isSync&apos;</span>, <span class="hljs-string">&apos;isSync&apos;</span>)
+    }
+
+    <span class="hljs-comment">// if (event.oldSersion &lt;= 2) {</span>
+    <span class="hljs-comment">//   // done something when current db version is great 2</span>
+    <span class="hljs-comment">// }</span>
+  }
+})
+<span class="hljs-keyword">var</span> Event = barn.model(<span class="hljs-string">&apos;event&apos;</span>, schema)
+</code></pre>
 
                     
                     </section>
@@ -231,8 +266,8 @@
         </div>
 
         
+        <a href="./model.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Model"><i class="fa fa-angle-left"></i></a>
         
-        <a href="./database.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Database"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

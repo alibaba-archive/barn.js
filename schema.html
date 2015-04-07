@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="2" data-basepath="." data-revision="Mon Apr 06 2015 21:42:42 GMT+0800 (CST)">
+    <div class="book" data-level="2" data-basepath="." data-revision="Tue Apr 07 2015 08:24:33 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -105,6 +105,21 @@
                             <b>3.</b>
                         
                         Model
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="migration.html">
+            
+                
+                    <a href="./migration.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        Migration
                     </a>
                 
             
@@ -205,6 +220,15 @@
                         <h1 id="schemas">Schemas</h1>
 <p>&#x7528;&#x6765;&#x5B9A;&#x4E49;&#x6570;&#x636E;&#x5E93;&#x4E2D;&#x7684;&#x4E00;&#x5F20;&#x8868;&#xFF0C;&#x5728; indexeddb &#x4E2D;&#x8868;&#x7684;&#x5B57;&#x6BB5;&#x662F;&#x65E0;&#x9700;&#x5B9A;&#x4E49;&#x7684;&#xFF0C;&#x53EA;&#x9700;&#x8981;&#x5B9A;&#x4E49;&#x8868;&#x7684;&#x4E3B;&#x952E;&#x3001;&#x7D22;&#x5F15;&#x7B49;&#x7B49;&#x3002;</p>
 <h2 id="%E5%AE%9A%E4%B9%89-schema">&#x5B9A;&#x4E49; Schema</h2>
+<ul>
+<li><code>keyPath</code>&#xFF1A;&#x4E3B;&#x952E;</li>
+<li><code>indexes</code>&#xFF1A;&#x7D22;&#x5F15;&#x5217;&#x8868;<ul>
+<li><code>name</code>&#xFF1A;&#x7D22;&#x5F15;&#x7684;&#x540D;&#x79F0;</li>
+<li><code>keyPath</code>&#xFF1A;&#x7D22;&#x5F15;&#x5BF9;&#x5E94;&#x7684;&#x952E;</li>
+<li><code>options</code>&#xFF1A;&#x7D22;&#x5F15;&#x5C5E;&#x6027;</li>
+</ul>
+</li>
+</ul>
 <pre><code class="lang-javascript">import * as barn from <span class="hljs-string">&apos;barn&apos;</span>
 
 <span class="hljs-keyword">var</span> Schema = barn.Schema

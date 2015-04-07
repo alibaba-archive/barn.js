@@ -20,6 +20,8 @@
         
     
     
+    <link rel="next" href="./migration.html" />
+    
     
     <link rel="prev" href="./schema.html" />
     
@@ -34,7 +36,7 @@
     
 
         
-    <div class="book" data-level="3" data-basepath="." data-revision="Mon Apr 06 2015 21:42:42 GMT+0800 (CST)">
+    <div class="book" data-level="3" data-basepath="." data-revision="Tue Apr 07 2015 08:24:33 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -103,6 +105,21 @@
                             <b>3.</b>
                         
                         Model
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="migration.html">
+            
+                
+                    <a href="./migration.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        Migration
                     </a>
                 
             
@@ -206,12 +223,71 @@
 <pre><code class="lang-javascript">import * as barn from <span class="hljs-string">&apos;barn&apos;</span>
 
 <span class="hljs-keyword">var</span> schema = <span class="hljs-keyword">new</span> barn.Schema({
-  keyPath: <span class="hljs-string">&apos;id&apos;</span>
+  keyPath: <span class="hljs-string">&apos;id&apos;</span>,
+  indexes: [{
+    name: <span class="hljs-string">&apos;isSync&apos;</span>,
+    keyPath: <span class="hljs-string">&apos;isSync&apos;</span>
+  }]
 })
 
 <span class="hljs-keyword">var</span> today = barn.database(<span class="hljs-string">&apos;today&apos;</span>, <span class="hljs-number">1</span>)
 
 <span class="hljs-keyword">var</span> Event = today.model(<span class="hljs-string">&apos;event&apos;</span>, schema)
+</code></pre>
+<h2 id="add">add</h2>
+<p>&#x65B0;&#x589E;&#x6570;&#x636E;&#x3002;</p>
+<pre><code class="lang-javascript">Event.add({
+  startDate: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(),
+  endDate: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(),
+  isSync: <span class="hljs-string">&apos;YES&apos;</span>
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> </span>{
+  <span class="hljs-comment">// do something with event</span>
+})
+</code></pre>
+<h2 id="get">get</h2>
+<p>&#x6839;&#x636E; <code>keyPath</code> &#x83B7;&#x53D6;&#x5BF9;&#x5E94;&#x7684;&#x6570;&#x636E;&#x3002;</p>
+<pre><code class="lang-javascript">Event.get(<span class="hljs-number">20</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> </span>{
+  <span class="hljs-comment">// do something with event</span>
+})
+</code></pre>
+<h2 id="getall">getAll</h2>
+<p>&#x83B7;&#x53D6;&#x6240;&#x6709;&#x5BF9;&#x8C61;&#x3002;</p>
+<pre><code class="lang-javascript">Event.getAll().then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(events)</span> </span>{
+  <span class="hljs-comment">// do something with events</span>
+})
+</code></pre>
+<h2 id="getbyindex">getByIndex</h2>
+<p>&#x901A;&#x8FC7;&#x7D22;&#x5F15;&#x67E5;&#x8BE2;&#x6240;&#x6709;&#x5339;&#x914D;&#x7684;&#x6570;&#x636E;</p>
+<pre><code class="lang-javascript">Event.getByIndex().then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(events)</span> </span>{
+  <span class="hljs-comment">// do something with events</span>
+})
+</code></pre>
+<h2 id="put">put</h2>
+<p>&#x66F4;&#x65B0;&#x6570;&#x636E;&#xFF0C;&#x5FC5;&#x987B;&#x4F20;&#x9012;&#x4E00;&#x4E2A; <code>keyPath</code> &#x503C;&#x3002;</p>
+<pre><code class="lang-javascript">Event.put({
+  id: <span class="hljs-number">13</span>,
+  startDate: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()
+}).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
+  <span class="hljs-comment">// event</span>
+})
+</code></pre>
+<h2 id="remove-id">remove(id)</h2>
+<p>&#x6839;&#x636E; <code>keyPath</code> &#x5220;&#x9664;&#x6570;&#x636E;&#x3002;</p>
+<pre><code class="lang-javascript">Event.remove(<span class="hljs-number">20</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id)</span> </span>{
+  <span class="hljs-comment">// id is the keyPath value of removed item</span>
+})
+</code></pre>
+<h2 id="removebyindex">removeByIndex</h2>
+<p>&#x6839;&#x636E;&#x7D22;&#x5F15;&#x5220;&#x9664;&#x6240;&#x6709;&#x5339;&#x914D;&#x7684;&#x6570;&#x636E;&#xFF1A;</p>
+<pre><code class="lang-javascript">Event.removeByIndex(<span class="hljs-string">&apos;isSync&apos;</span>, <span class="hljs-string">&apos;YES&apos;</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-comment">// success delete</span>
+})
+</code></pre>
+<h2 id="clear">clear</h2>
+<p>&#x6E05;&#x9664;&#x8868;&#x4E2D;&#x7684;&#x6240;&#x6709;&#x6570;&#x636E;</p>
+<pre><code class="lang-javascript">Event.clear().then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-comment">// success clear</span>
+})
 </code></pre>
 
                     
@@ -223,8 +299,10 @@
         </div>
 
         
-        <a href="./schema.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Schema"><i class="fa fa-angle-left"></i></a>
+        <a href="./schema.html" class="navigation navigation-prev " aria-label="Previous page: Schema"><i class="fa fa-angle-left"></i></a>
         
+        
+        <a href="./migration.html" class="navigation navigation-next " aria-label="Next page: Migration"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
