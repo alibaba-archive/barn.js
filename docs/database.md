@@ -28,3 +28,17 @@ today.open().then(function () {
   console.log(error)
 })
 ```
+
+## clear()
+
+清除数据库中所有表数据，但表结构还依然存在。
+
+### return
+
+promise 对象。
+
+```javascript
+today.clear().then(funciton () {
+  // success clear
+})
+```

@@ -11,7 +11,10 @@ export class Database {
     this.models = []
   }
   model(name, schema) {
-    return this.models[name] = new Model(schema)
+    var model = this.models[name] = new Model(schema)
+    model.name = name
+    model.db = this
+    return model
   }
   open() {
     if (!this.opened) {
@@ -45,18 +48,224 @@ export class Database {
     }
     return this.opened
   }
+  add(name, data) {
+    return this.open().then(() => {
+      return new Promise((resolve, reject) => {
+        var transaction = this.db.transaction(name, 'readwrite')
+
+        transaction.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+        var store = transaction.objectStore(name)
+        var request = store.add(data)
+
+        request.onsuccess = (event) => {
+          data[this.models[name].schema.keyPath] = request.result
+          resolve(data)
+        }
+
+        request.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+      })
+    })
+  }
+  get(name, id) {
+    return this.open().then(() => {
+      return new Promise((resolve, reject) => {
+        var transaction = this.db.transaction(name, 'readwrite')
+
+        transaction.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+        var store = transaction.objectStore(name)
+        var request = store.get(id)
+
+        request.onsuccess = (event) => {
+          resolve(request.result)
+        }
+
+        request.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+      })
+    })
+  }
+  getAll(name) {
+    return this.open().then(() => {
+      return new Promise((resolve, reject) => {
+        var transaction = this.db.transaction(name, 'readwrite')
+        var all = []
+        transaction.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+        var store = transaction.objectStore(name)
+        var request = store.openCursor()
+
+        request.onsuccess = (event) => {
+          var cursor = event.target.result
+          if (cursor) {
+            all.push(cursor.value)
+            cursor.continue()
+          } else {
+            resolve(all)
+          }
+        }
+
+        request.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+      })
+    })
+  }
+  getByIndex(name, keyPath, keyRange) {
+    return this.open().then(() => {
+      return new Promise((resolve, reject) => {
+        var transaction = this.db.transaction(name, 'readwrite')
+        var all = []
+        transaction.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+        var store = transaction.objectStore(name)
+        var index = store.index(keyPath)
+        var request = index.openCursor(keyRange)
+
+        request.onsuccess = (event) => {
+          var cursor = event.target.result
+          if (cursor) {
+            all.push(cursor.value)
+            cursor.continue()
+          } else {
+            resolve(all)
+          }
+        }
+
+        request.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+      })
+    })
+  }
+  put(name, data) {
+    return this.open().then(() => {
+      return new Promise((resolve, reject) => {
+        var transaction = this.db.transaction(name, 'readwrite')
+
+        transaction.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+        var store = transaction.objectStore(name)
+        var request = store.put(data)
+
+        request.onsuccess = (event) => {
+          resolve(data)
+        }
+
+        request.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+      })
+    })
+  }
+  remove(name, id) {
+    return this.open().then(() => {
+      return new Promise((resolve, reject) => {
+        var transaction = this.db.transaction(name, 'readwrite')
+
+        transaction.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+        var store = transaction.objectStore(name)
+        var request = store.delete(id)
+
+        request.onsuccess = (event) => {
+          resolve(id)
+        }
+
+        request.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+      })
+    })
+  }
+  removeByIndex(name, keyPath, keyRange) {
+    return this.open().then(() => {
+      return new Promise((resolve, reject) => {
+        var transaction = this.db.transaction(name, 'readwrite')
+
+        transaction.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+        var store = transaction.objectStore(name)
+        var index = store.index(keyPath)
+        var request = index.openCursor(keyRange)
+
+        request.onsuccess = (event) => {
+          var cursor = event.target.result
+          if (cursor) {
+            cursor.delete()
+            cursor.continue()
+          } else {
+            resolve('success delete')
+          }
+        }
+
+        request.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+      })
+    })
+  }
+  clear(name) {
+    return this.open().then(() => {
+      var names = []
+      if (name) {
+        names = [name]
+      } else {
+        names = Object.keys(this.models)
+      }
+      return Promise.all(names.map((name) => {
+        return new Promise((resolve, reject) => {
+          var transaction = this.db.transaction(name, 'readwrite')
+
+          transaction.onerror = (event) => {
+            reject(event.currentTarget.error)
+          }
+
+          var store = transaction.objectStore(name)
+          var request = store.clear()
+
+          request.onsuccess = (event) => {
+            resolve(request.result)
+          }
+
+          request.onerror = (event) => {
+            reject(event.currentTarget.error)
+          }
+        })        
+      }))
+    })
+  }
   onCreate() {
     var name, model
     var store
     var indexes, index
     for (var name in this.models) {
-      if (this.models.hasOwnproperty(name)) {
+      if (this.models.hasOwnProperty(name)) {
         model = this.models[name]
         store = this.db.createObjectStore(name, {
           keyPath: model.schema.keyPath,
           autoIncrement: true
         })
-        indexes = model.schema.indexes || []
+        indexes = model.schema.indexes
         for (index of indexes) {
           store.createIndex(index.name, index.keyPath, index.options)
         }

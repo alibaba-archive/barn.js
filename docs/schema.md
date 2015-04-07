@@ -4,6 +4,12 @@
 
 ## 定义 Schema
 
+- `keyPath`：主键
+- `indexes`：索引列表
+  - `name`：索引的名称
+  - `keyPath`：索引对应的键
+  - `options`：索引属性
+
 ``` javascript
 import * as barn from 'barn'
 
