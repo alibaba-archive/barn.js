@@ -1,6 +1,6 @@
 {
   "name": "barn.js",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "scalable and extendable browser db library based on indexeddb.",
   "main": "index.js",
   "scripts": {

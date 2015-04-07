@@ -1,0 +1,24 @@
+{
+  "name": "barn.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/teambition/barn.js",
+  "authors": [
+    "island205 <island205@gmail.com>"
+  ],
+  "description": "full feature indexeddb wrapper.",
+  "main": "es5/barn.js",
+  "keywords": [
+    "indexeddb"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "docs",
+    "examples",
+    "src"
+  ]
+}
