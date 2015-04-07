@@ -4,7 +4,7 @@
   "description": "scalable and extendable browser db library based on indexeddb.",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "build": "browserify es5/seed.js -t babelify --outfile es5/barn.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/teambition/barn.js",
   "devDependencies": {
+    "babelify": "^6.0.1",
     "jasmine-core": "^2.2.0",
     "karma": "^0.12.31",
     "karma-babel-preprocessor": "^5.0.1",
