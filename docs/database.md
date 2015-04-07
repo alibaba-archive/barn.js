@@ -1,6 +1,6 @@
 # Database
 
-对应 indexeddb 里面的一张表。
+对应 indexeddb 里面的一个数据库。
 
 ## 创建数据库
 
@@ -13,7 +13,7 @@ import * as barn from 'barn'
 var today = barn.database('today', 1)
 ```
 
-## open()
+## open
 
 打开数据库，创建数据表，一个数据库在一个运行时中只会被打开一次。
 
@@ -29,7 +29,7 @@ today.open().then(function () {
 })
 ```
 
-## clear()
+## clear
 
 清除数据库中所有表数据，但表结构还依然存在。
 
