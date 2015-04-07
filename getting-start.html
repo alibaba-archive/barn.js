@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Database | 欢迎使用 BarnJS</title>
+        <title>Getting start | 欢迎使用 BarnJS</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.0">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="./schema.html" />
+    <link rel="next" href="./database.html" />
     
     
-    <link rel="prev" href="./getting-start.html" />
+    <link rel="prev" href="./index.html" />
     
 
         
@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="2" data-basepath="." data-revision="Tue Apr 07 2015 22:50:17 GMT+0800 (CST)">
+    <div class="book" data-level="1" data-basepath="." data-revision="Tue Apr 07 2015 22:50:17 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -66,7 +66,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1" data-path="getting-start.html">
+        <li class="chapter active" data-level="1" data-path="getting-start.html">
             
                 
                     <a href="./getting-start.html">
@@ -81,7 +81,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2" data-path="database.html">
+        <li class="chapter " data-level="2" data-path="database.html">
             
                 
                     <a href="./database.html">
@@ -232,35 +232,19 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="database">Database</h1>
-<p>&#x5BF9;&#x5E94; indexeddb &#x91CC;&#x9762;&#x7684;&#x4E00;&#x4E2A;&#x6570;&#x636E;&#x5E93;&#x3002;</p>
-<h2 id="%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93">&#x521B;&#x5EFA;&#x6570;&#x636E;&#x5E93;</h2>
-<blockquote>
-<p><strong>&#x6CE8;&#x610F;&#xFF1A;</strong> &#x8FD9;&#x91CC;&#x7684;&#x6570;&#x636E;&#x5E93;&#x521B;&#x5EFA;&#x53EA;&#x662F;&#x4E00;&#x79CD;&#x8BB0;&#x5F55;&#xFF0C;&#x53EA;&#x6709;&#x901A;&#x8FC7; <code>open()</code> &#x65B9;&#x6CD5;&#x771F;&#x6B63;&#x6253;&#x5F00;&#x6570;&#x636E;&#x5E93;&#x662F;&#x624D;&#x4F1A;&#x521B;&#x5EFA;&#x5BF9;&#x5E94;&#x7684;&#x6570;&#x636E;&#x5E93;&#x3002;</p>
-</blockquote>
-<pre><code class="lang-javascript">import * as barn from <span class="hljs-string">&apos;barn&apos;</span>
-
-<span class="hljs-comment">// barn.database(name, version)</span>
-<span class="hljs-keyword">var</span> today = barn.database(<span class="hljs-string">&apos;today&apos;</span>, <span class="hljs-number">1</span>)
+                        <h1 id="%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8">&#x5FEB;&#x901F;&#x5165;&#x95E8;</h1>
+<h2 id="%E5%AE%89%E8%A3%85">&#x5B89;&#x88C5;</h2>
+<pre><code class="lang-bash">$ bower i barn.js
+<span class="hljs-comment"># or</span>
+$ npm i barn
+<span class="hljs-comment"># or</span>
+$ jspm i barn.js
 </code></pre>
-<h2 id="open">open</h2>
-<p>&#x6253;&#x5F00;&#x6570;&#x636E;&#x5E93;&#xFF0C;&#x521B;&#x5EFA;&#x6570;&#x636E;&#x8868;&#xFF0C;&#x4E00;&#x4E2A;&#x6570;&#x636E;&#x5E93;&#x5728;&#x4E00;&#x4E2A;&#x8FD0;&#x884C;&#x65F6;&#x4E2D;&#x53EA;&#x4F1A;&#x88AB;&#x6253;&#x5F00;&#x4E00;&#x6B21;&#x3002;</p>
-<h3 id="return">return</h3>
-<p>promise &#x5BF9;&#x8C61;&#x3002;</p>
-<pre><code class="lang-javascript">today.open().then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-  <span class="hljs-comment">// open db success</span>
-}, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(error)</span> </span>{
-  <span class="hljs-built_in">console</span>.log(error)
-})
-</code></pre>
-<h2 id="clear">clear</h2>
-<p>&#x6E05;&#x9664;&#x6570;&#x636E;&#x5E93;&#x4E2D;&#x6240;&#x6709;&#x8868;&#x6570;&#x636E;&#xFF0C;&#x4F46;&#x8868;&#x7ED3;&#x6784;&#x8FD8;&#x4F9D;&#x7136;&#x5B58;&#x5728;&#x3002;</p>
-<h3 id="return">return</h3>
-<p>promise &#x5BF9;&#x8C61;&#x3002;</p>
-<pre><code class="lang-javascript">today.clear().then(funciton () {
-  <span class="hljs-comment">// success clear</span>
-})
-</code></pre>
+<h2 id="%E4%BD%BF%E7%94%A8">&#x4F7F;&#x7528;</h2>
+<h3 id="%E5%BD%93%E5%81%9A-amd-%E6%A8%A1%E5%9D%97">&#x5F53;&#x505A; AMD &#x6A21;&#x5757;</h3>
+<h3 id="es6-%E6%A8%A1%E5%9D%97">ES6 &#x6A21;&#x5757;</h3>
+<h3 id="commonjs">CommonJS</h3>
+<h3 id="%E5%85%A8%E5%B1%80">&#x5168;&#x5C40;</h3>
 
                     
                     </section>
@@ -271,10 +255,10 @@
         </div>
 
         
-        <a href="./getting-start.html" class="navigation navigation-prev " aria-label="Previous page: Getting start"><i class="fa fa-angle-left"></i></a>
+        <a href="./index.html" class="navigation navigation-prev " aria-label="Previous page: "><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="./schema.html" class="navigation navigation-next " aria-label="Next page: Schema"><i class="fa fa-angle-right"></i></a>
+        <a href="./database.html" class="navigation navigation-next " aria-label="Next page: Database"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

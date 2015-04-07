@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Migration | Barn.JS</title>
+        <title>Migration | 欢迎使用 BarnJS</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.0">
@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4" data-basepath="." data-revision="Tue Apr 07 2015 08:24:33 GMT+0800 (CST)">
+    <div class="book" data-level="5" data-basepath="." data-revision="Tue Apr 07 2015 22:50:17 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -64,13 +64,28 @@
             
         </li>
     
-        <li class="chapter " data-level="1" data-path="database.html">
+        <li class="chapter " data-level="1" data-path="getting-start.html">
+            
+                
+                    <a href="./getting-start.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        Getting start
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="database.html">
             
                 
                     <a href="./database.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>1.</b>
+                            <b>2.</b>
                         
                         Database
                     </a>
@@ -79,13 +94,13 @@
             
         </li>
     
-        <li class="chapter " data-level="2" data-path="schema.html">
+        <li class="chapter " data-level="3" data-path="schema.html">
             
                 
                     <a href="./schema.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>2.</b>
+                            <b>3.</b>
                         
                         Schema
                     </a>
@@ -94,13 +109,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3" data-path="model.html">
+        <li class="chapter " data-level="4" data-path="model.html">
             
                 
                     <a href="./model.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.</b>
+                            <b>4.</b>
                         
                         Model
                     </a>
@@ -109,13 +124,13 @@
             
         </li>
     
-        <li class="chapter active" data-level="4" data-path="migration.html">
+        <li class="chapter active" data-level="5" data-path="migration.html">
             
                 
                     <a href="./migration.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>4.</b>
+                            <b>5.</b>
                         
                         Migration
                     </a>
@@ -205,7 +220,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="./" >Barn.JS</a>
+        <a href="./" >欢迎使用 BarnJS</a>
     </h1>
 </div>
 
@@ -217,7 +232,7 @@
                     
                         <h1 id="%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB">&#x6570;&#x636E;&#x8FC1;&#x79FB;</h1>
 <p><code>barn.js</code> &#x63D0;&#x4F9B;&#x4E86;&#x975E;&#x5E38;&#x7075;&#x6D3B;&#x7684;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x65B9;&#x6848;&#x3002;</p>
-<h2 id="version-1">version 1</h2>
+<h2 id="%E7%89%88%E6%9C%AC-1">&#x7248;&#x672C; 1</h2>
 <p><code>barn.database</code> &#x65B9;&#x6CD5;&#x9664;&#x4E86;&#x63A5;&#x53D7;&#x6570;&#x636E;&#x5E93;&#x540D;&#x4EE5;&#x5916;&#xFF0C;&#x8FD8;&#x63A5;&#x53D7;&#x4E00;&#x4E2A; <code>version</code> &#x53C2;&#x6570;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x7528;&#x6765;&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x3002; </p>
 <pre><code class="lang-javascript">import * as barn from <span class="hljs-string">&apos;barn&apos;</span>
 
@@ -229,21 +244,23 @@
 })
 <span class="hljs-keyword">var</span> Event = barn.model(<span class="hljs-string">&apos;event&apos;</span>, schema)
 </code></pre>
-<h2 id="version-2">version 2</h2>
+<h2 id="%E7%89%88%E6%9C%AC-2">&#x7248;&#x672C; 2</h2>
 <p><code>Schema</code> &#x6784;&#x9020;&#x5668;&#x63A5;&#x53D7;&#x4E00;&#x4E2A; <code>onUpgrade</code>&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x57FA;&#x4E8E;&#x5B83;&#x6765;&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x3002;</p>
 <pre><code class="lang-javascript">import * as barn from <span class="hljs-string">&apos;barn&apos;</span>
 
-<span class="hljs-comment">// &#x76EE;&#x524D; today &#x6570;&#x636E;&#x7684; version &#x662F; 1</span>
+<span class="hljs-comment">// &#x76EE;&#x524D; today &#x6570;&#x636E;&#x7684; version &#x662F; 2</span>
 <span class="hljs-keyword">var</span> today = barn.database(<span class="hljs-string">&apos;today&apos;</span>, <span class="hljs-number">2</span>)
 
 <span class="hljs-keyword">var</span> schema = <span class="hljs-keyword">new</span> barn.Schema({
   keyPath: <span class="hljs-string">&apos;id&apos;</span>,
+  <span class="hljs-comment">// &#x65B0;&#x52A0;&#x4E86;&#x4E00;&#x4E2A;&#x7D22;&#x5F15;</span>
   indexes: [{
     name: <span class="hljs-string">&apos;isSync&apos;</span>,
     keyPath: <span class="hljs-string">&apos;isSync&apos;</span>
   }],
   onUpgrade: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> </span>{
     <span class="hljs-keyword">var</span> store
+    <span class="hljs-comment">// &#x5BF9;&#x4E8E;&#x6570;&#x636E;&#x5E93;&#x8FC1;&#x79FB;&#x7684;&#x7528;&#x6237;&#xFF0C;&#x624B;&#x52A8;&#x521B;&#x5EFA;&#x5BF9;&#x5E94;&#x7684;&#x7D22;&#x5F15;</span>
     <span class="hljs-keyword">if</span> (event.oldVersion &lt;=<span class="hljs-number">1</span>) {
       store = event.db.objectStore(<span class="hljs-string">&apos;event&apos;</span>)
       store.createIndex(<span class="hljs-string">&apos;isSync&apos;</span>, <span class="hljs-string">&apos;isSync&apos;</span>)
