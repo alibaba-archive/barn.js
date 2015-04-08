@@ -12,13 +12,15 @@ requirejs.config({
   baseUrl: '/',
 
   paths: {
+    chance: 'base/bower_components/chance/chance',
+    'es6-shim': 'base/bower_components/es6-shim/es6-shim'
   },
 
   shim: {
   },
 
   // ask Require.js to load these files (all our tests)
-  deps: tests,
+  deps: (tests.push('es6-shim'),tests),
 
   // start test run, once Require.js is done
   callback: window.__karma__.start

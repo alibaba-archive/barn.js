@@ -20,5 +20,9 @@
     "docs",
     "examples",
     "src"
-  ]
+  ],
+  "devDependencies": {
+    "chance": "~0.7.3",
+    "es6-shim": "~0.27.1"
+  }
 }

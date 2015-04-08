@@ -2,7 +2,10 @@ import * as barn from '../../src/barn'
 
 describe('Database', function () {
   beforeEach(function () {
-    this.today = barn.database('today', 1)
+    this.today = barn.database({
+      name: 'today',
+      version: 1
+    })
     var eventSchema = new barn.Schema({
       keyPath: 'id'
     })

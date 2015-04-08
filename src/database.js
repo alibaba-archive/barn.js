@@ -5,9 +5,10 @@ var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || win
 export var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
 
 export class Database {
-  constructor(name, version) {
-    this.name = name
-    this.version = version || 1
+  constructor(options = {}) {
+    this.name = options.name
+    this.version = options.version || 1
+    this.onUpgrade = options.onUpgrade || this.onUpgrade
     this.models = []
   }
   model(name, schema) {
@@ -35,9 +36,9 @@ export class Database {
           this.db = event.target.result
           try {
             if (event.oldVersion === 0) {
-              this.onCreate()
+              this.__onCreate()
             } else {
-              this.onUpgrade(event)
+              this.__onUpgrade(event)
             }
           } catch (error) {
             reject(error)
@@ -224,6 +225,28 @@ export class Database {
       })
     })
   }
+  count(name, keyOrKeyRange) {
+    return this.open().then(() => {
+      return new Promise((resolve, reject) => {
+        var transaction = this.db.transaction(name, 'readonly')
+
+        transaction.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+
+        var store = transaction.objectStore(name)
+        var request = store.count(keyOrKeyRange)
+
+        request.onsuccess = () => {
+          resolve(request.result)
+        }
+
+        request.onerror = (event) => {
+          reject(event.currentTarget.error)
+        }
+      })      
+    })
+  }
   clear(name) {
     return this.open().then(() => {
       var names = []
@@ -254,7 +277,7 @@ export class Database {
       }))
     })
   }
-  onCreate() {
+  __onCreate() {
     var name, model
     var store
     var indexes, index
@@ -272,7 +295,8 @@ export class Database {
       }
     }
   }
-  onUpgrade (event) {
+  __onUpgrade (event) {
+    this.onUpgrade()
     for (var name in this.models) {
       if (this.models.hasOwnproperty(name)) {
         this.models[name].schema.onUpgrade(event)

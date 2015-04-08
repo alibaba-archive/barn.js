@@ -1,9 +1,16 @@
 import * as barn from '../../src/barn'
+import * as Chance from 'chance'
+
+var chance = new Chance
+
 var Schema = barn.Schema
 
 describe('Model', function () {
   it('should new a Model', function () {
-    var today = barn.database('today', 1)
+    var today = barn.database({
+      name: 'today',
+      version: 1
+    })
     var eventSchema = new Schema({
       keyPath: 'id',
       indexes: [{
@@ -22,7 +29,10 @@ describe('Model', function () {
 
   describe('can', function () {
     beforeEach(function () {
-      this.EventModel = barn.database('today1', 1).model('event', new barn.Schema({
+      this.EventModel = barn.database({
+        name: 'today1',
+        version: 1
+      }).model('event', new barn.Schema({
         keyPath: 'id',
         indexes: [{
           name: 'isSync',
@@ -160,6 +170,16 @@ describe('Model', function () {
       })
     })
 
+    it('count all events in database', function (done) {
+      Promise.all([this.EventModel.getAll(), this.EventModel.count()])
+        .then(function (results) {
+          expect(results[0].length).toBe(results[1])
+          done()
+        }, function (error) {
+          console.log(error.stack)
+        })
+    })
+
     it('clear all event', function (done) {
       this.EventModel.add({
         startDate: new Date
@@ -174,6 +194,100 @@ describe('Model', function () {
       }).then((events) => {
         expect(events.length == 0).toBe(true)
         done()
+      })
+    })
+
+    it('put batch data in to database', function (done) {
+      var isSyncIndexValue = chance.guid()
+      var oldIsSyncIndexValue = chance.guid()
+      expect(isSyncIndexValue != oldIsSyncIndexValue).toBe(true)
+      var rawEvents = [
+        {isSync: isSyncIndexValue},
+        {isSync: isSyncIndexValue},
+        {isSync: isSyncIndexValue}
+      ]
+      this.EventModel.add({
+        isSync: oldIsSyncIndexValue
+      }).then((event) => {
+        expect(event.isSync).toBe(oldIsSyncIndexValue)
+        event.isSync = isSyncIndexValue
+        rawEvents.push(event)
+        return this.EventModel.putBatch(rawEvents)
+      }).then(() => {
+        return this.EventModel.getByIndex('isSync', isSyncIndexValue)
+      }).then(function (events) {
+        expect(rawEvents.length).toBe(events.length)
+        done()
+      }, function (error) {
+        console.log(error.stack)
+      })
+    })
+
+    it('remove batch event from database', function (done) {
+      var isSyncIndexValue = chance.guid()
+      var rawEvents = [
+        {isSync: isSyncIndexValue},
+        {isSync: isSyncIndexValue},
+        {isSync: isSyncIndexValue}
+      ]
+      this.EventModel.putBatch(rawEvents).then(() => {
+        return this.EventModel.getByIndex('isSync', isSyncIndexValue)
+      }).then((events) => {
+        expect(events.length).toBe(3)
+        events.push({
+          isSync: 'something else'
+        })
+        return this.EventModel.removeBatch(events)
+      }).then(() => {
+        return this.EventModel.getByIndex('isSync', isSyncIndexValue)
+      }).then(function (events) {
+        expect(events.length).toBe(0)
+        done()
+      }, function (error) {
+        console.log(error.stack)
+      })
+    })
+
+    it('batch anything to database', function (done) {
+      var isSyncIndexValue = chance.guid()
+      var anotherIsSyncIndexValue = chance.guid()
+      var rawEvents = [
+        {isSync: isSyncIndexValue},
+        {isSync: isSyncIndexValue},
+        {isSync: isSyncIndexValue}
+      ]
+      this.EventModel.putBatch(rawEvents).then(() => {
+        return this.EventModel.getByIndex('isSync', isSyncIndexValue)
+      }).then((events) => {
+        expect(events.length).toBe(3)
+        var batches = [
+          {
+            opt:'add',
+            value: {isSync: isSyncIndexValue},
+          },
+          {
+            opt:'put',
+            value: Object.assign(events[0], {
+              isSync: anotherIsSyncIndexValue
+            }),
+          },
+          {
+            opt:'remove',
+            value: events[1],
+          }
+        ]
+        return this.EventModel.batch(batches)
+      }).then(() => {
+        return Promise.all([
+          this.EventModel.getByIndex('isSync', isSyncIndexValue),
+          this.EventModel.getByIndex('isSync', anotherIsSyncIndexValue)
+        ])
+      }).then(function (results) {
+        expect(results[0].length).toBe(2)
+        expect(results[1].length).toBe(1)
+        done()
+      }, function (error) {
+        console.log(error.stack)
       })
     })
   })

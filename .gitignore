@@ -3,6 +3,7 @@ logs
 *.log
 
 docs/_book
+bower_components
 
 # Runtime data
 pids

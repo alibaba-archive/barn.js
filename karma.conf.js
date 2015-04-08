@@ -17,6 +17,8 @@ module.exports = function(config) {
     files: [
       {pattern: "src/**/*.js", included: false},
       {pattern: "test/specs/**/*.js", included: false},
+      {pattern: 'bower_components/chance/chance.js', included: false},
+      {pattern: 'bower_components/es6-shim/es6-shim.js', included: false},
       'test/test-main.js'
     ],
 
