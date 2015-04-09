@@ -66,14 +66,14 @@ export default class Model {
   }
 
   batch(batches) {
-    var keyPath = this.schema.keyPath
+    var primaryKeyPath = this.schema.keyPath
     return Promise.all(batches.map((batch) => {
-      return this[batch.opt](batch.opt === 'remove' ? batch.value[keyPath] : batch.value)
+      return this[batch.opt](batch.opt === 'remove' ? batch.value[primaryKeyPath] : batch.value)
     }))
   }
 
   // index
   index(indexName) {
-    return new Index(indexName)
+    return new Index(this.db, this.name, indexName)
   }
 }
