@@ -6,6 +6,7 @@
   - [barn.database](./api/database/barn.database.md)
   - [barn.Schema](./api/schema/barn.schema.md)
   - [Database.clear](./api/database/database.clear.md)
+  - [Database.destroy](./api/database/database.destroy.md)
   - [Database.model](./api/database/database.model.md)
   - [Model.add](./api/model/model.add.md)
   - [Model.put](./api/model/model.put.md)

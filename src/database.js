@@ -6,6 +6,10 @@ export var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || windo
 
 export class Database {
   constructor(options = {}) {
+    if (typeof indexedDB == 'undefined') {
+      throw new Error('indexedDB is unsupported!')
+      return
+    }
     this.name = options.name
     this.version = options.version || 1
     this.onUpgrade = options.onUpgrade || this.onUpgrade
@@ -48,6 +52,20 @@ export class Database {
       })
     }
     return this.opened
+  }
+  destroy() {
+    return new Promise((resolve, reject) => {
+      var request = indexedDB.deleteDatabase(this.name)
+      
+      request.onerror = function (event) {
+        reject(event.currentTarget.error)
+      }
+
+      request.onsuccess = function (event) {
+        resolve('delete success')
+      }
+      
+    })
   }
   add(name, data) {
     return this.open().then(() => {

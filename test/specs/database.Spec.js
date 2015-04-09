@@ -15,6 +15,7 @@ describe('Database', function () {
     this.event = this.today.model('event', eventSchema)
     this.calendar = this.today.model('calendar', eventSchema)
   })
+
   it('should new a database', function () {
     expect(this.today.name).toBe('today')
     expect(this.today.version).toBe(1)
@@ -55,4 +56,16 @@ describe('Database', function () {
       console.log(error.stack)
     })
   })
+
+  // it('should delete itself', function (done) {
+  //   var today1 = barn.database('today1')
+  //   today1.open().then(function () {
+  //     return today1.destroy()
+  //   }).then(function () {
+  //     done()
+  //   }, function (error) {
+  //     console.log(error.stack)
+  //   })
+  // })
+
 })
