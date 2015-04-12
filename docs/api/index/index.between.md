@@ -1,4 +1,4 @@
-## Index.only()
+## Index.between()
 
 ```javascript
 // get or remove count is between 30 and 50

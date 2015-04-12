@@ -1,20 +1,14 @@
 'use strict';
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
-
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _import = require('./schema');
-
-var Schema = _interopRequireWildcard(_import);
+var _Schema = require('./schema');
 
 var _Database$IDBKeyRange = require('./database');
 
-var _import2 = require('./model');
-
-var Model = _interopRequireWildcard(_import2);
+var _Model = require('./model');
 
 var barn = {
   database: function database(name, version) {
@@ -22,7 +16,7 @@ var barn = {
   }
 };
 
-barn.Schema = Schema;
+barn.Schema = _Schema.Schema;
 barn.IDBKeyRange = _Database$IDBKeyRange.IDBKeyRange;
 
 exports['default'] = barn;

@@ -27,5 +27,4 @@ var Schema = (function () {
   return Schema;
 })();
 
-exports["default"] = Schema;
-module.exports = exports["default"];
+exports.Schema = Schema;

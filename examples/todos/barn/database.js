@@ -1,7 +1,5 @@
 'use strict';
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
-
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -10,9 +8,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _import = require('./model');
-
-var Model = _interopRequireWildcard(_import);
+var _Model = require('./model');
 
 var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
@@ -26,6 +22,10 @@ var Database = (function () {
 
     _classCallCheck(this, Database);
 
+    if (typeof indexedDB == 'undefined') {
+      throw new Error('indexedDB is unsupported!');
+      return;
+    }
     this.name = options.name;
     this.version = options.version || 1;
     this.onUpgrade = options.onUpgrade || this.onUpgrade;
@@ -45,7 +45,7 @@ var Database = (function () {
 
       return model;
     })(function (name, schema) {
-      var model = this.models[name] = new Model(schema);
+      var model = this.models[name] = new _Model.Model(schema);
       model.name = name;
       model.db = this;
       return model;
@@ -86,13 +86,30 @@ var Database = (function () {
       return this.opened;
     }
   }, {
+    key: 'destroy',
+    value: function destroy() {
+      var _this2 = this;
+
+      return new Promise(function (resolve, reject) {
+        var request = indexedDB.deleteDatabase(_this2.name);
+
+        request.onerror = function (event) {
+          reject(event.currentTarget.error);
+        };
+
+        request.onsuccess = function (event) {
+          resolve('delete success');
+        };
+      });
+    }
+  }, {
     key: 'add',
     value: function add(name, data) {
-      var _this2 = this;
+      var _this3 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this2.db.transaction(name, 'readwrite');
+          var transaction = _this3.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -102,7 +119,7 @@ var Database = (function () {
           var request = store.add(data);
 
           request.onsuccess = function (event) {
-            data[_this2.models[name].schema.keyPath] = request.result;
+            data[_this3.models[name].schema.keyPath] = request.result;
             resolve(data);
           };
 
@@ -115,11 +132,11 @@ var Database = (function () {
   }, {
     key: 'get',
     value: function get(name, id) {
-      var _this3 = this;
+      var _this4 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this3.db.transaction(name, 'readwrite');
+          var transaction = _this4.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -141,11 +158,11 @@ var Database = (function () {
   }, {
     key: 'getAll',
     value: function getAll(name) {
-      var _this4 = this;
+      var _this5 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this4.db.transaction(name, 'readwrite');
+          var transaction = _this5.db.transaction(name, 'readwrite');
           var all = [];
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -173,11 +190,11 @@ var Database = (function () {
   }, {
     key: 'getByIndex',
     value: function getByIndex(name, keyPath, keyRange) {
-      var _this5 = this;
+      var _this6 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this5.db.transaction(name, 'readwrite');
+          var transaction = _this6.db.transaction(name, 'readwrite');
           var all = [];
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -206,11 +223,11 @@ var Database = (function () {
   }, {
     key: 'put',
     value: function put(name, data) {
-      var _this6 = this;
+      var _this7 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this6.db.transaction(name, 'readwrite');
+          var transaction = _this7.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -232,11 +249,11 @@ var Database = (function () {
   }, {
     key: 'remove',
     value: function remove(name, id) {
-      var _this7 = this;
+      var _this8 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this7.db.transaction(name, 'readwrite');
+          var transaction = _this8.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -258,11 +275,11 @@ var Database = (function () {
   }, {
     key: 'removeByIndex',
     value: function removeByIndex(name, keyPath, keyRange) {
-      var _this8 = this;
+      var _this9 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this8.db.transaction(name, 'readwrite');
+          var transaction = _this9.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -291,11 +308,11 @@ var Database = (function () {
   }, {
     key: 'count',
     value: function count(name, keyOrKeyRange) {
-      var _this9 = this;
+      var _this10 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this9.db.transaction(name, 'readonly');
+          var transaction = _this10.db.transaction(name, 'readonly');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -317,18 +334,18 @@ var Database = (function () {
   }, {
     key: 'clear',
     value: function clear(name) {
-      var _this10 = this;
+      var _this11 = this;
 
       return this.open().then(function () {
         var names = [];
         if (name) {
           names = [name];
         } else {
-          names = Object.keys(_this10.models);
+          names = Object.keys(_this11.models);
         }
         return Promise.all(names.map(function (name) {
           return new Promise(function (resolve, reject) {
-            var transaction = _this10.db.transaction(name, 'readwrite');
+            var transaction = _this11.db.transaction(name, 'readwrite');
 
             transaction.onerror = function (event) {
               reject(event.currentTarget.error);

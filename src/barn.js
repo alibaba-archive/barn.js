@@ -1,6 +1,6 @@
-import * as Schema from'./schema'
+import {Schema} from'./schema'
 import {Database, IDBKeyRange} from './database'
-import * as Model from './model'
+import {Model} from './model'
 
 var barn = {
   database: function(name, version) {

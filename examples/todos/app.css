@@ -2622,3 +2622,15 @@ hr {
 .mui-transition-slide-in.mui-is-down .mui-transition-slide-in-leave-active {
   transform: translate3d(0, 100%, 0);
 }
+.todo-app {
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 600px;
+}
+.todo-panel {
+  padding: 30px;
+}
+.todo-input {
+  width: 100%;
+}

@@ -1,4 +1,4 @@
-export default class Schema {
+export class Schema {
   constructor(options={}) {
     this.keyPath = options.keyPath
     this.indexes = options.indexes || []

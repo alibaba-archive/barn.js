@@ -1,6 +1,6 @@
 import {IDBKeyRange} from './database'
 
-export default class Index {
+export class Index {
   constructor(db, name, indexName) {
     this.db = db
     this.name = name

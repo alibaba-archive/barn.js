@@ -1,7 +1,5 @@
 'use strict';
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
-
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -10,13 +8,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _import = require('./database');
-
-var Database = _interopRequireWildcard(_import);
-
-var _import2 = require('./index');
-
-var Index = _interopRequireWildcard(_import2);
+var _Index = require('./index');
 
 var Model = (function () {
   function Model(schema) {
@@ -114,9 +106,9 @@ var Model = (function () {
     value: function batch(batches) {
       var _this3 = this;
 
-      var keyPath = this.schema.keyPath;
+      var primaryKeyPath = this.schema.keyPath;
       return Promise.all(batches.map(function (batch) {
-        return _this3[batch.opt](batch.opt === 'remove' ? batch.value[keyPath] : batch.value);
+        return _this3[batch.opt](batch.opt === 'remove' ? batch.value[primaryKeyPath] : batch.value);
       }));
     }
   }, {
@@ -124,12 +116,11 @@ var Model = (function () {
 
     // index
     value: function index(indexName) {
-      return new Index(indexName);
+      return new _Index.Index(this.db, this.name, indexName);
     }
   }]);
 
   return Model;
 })();
 
-exports['default'] = Model;
-module.exports = exports['default'];
+exports.Model = Model;

@@ -1,7 +1,6 @@
-import * as Database from './database'
-import * as Index from './index'
+import {Index} from './index'
 
-export default class Model {
+export class Model {
   constructor(schema) {
     this.schema = schema
   }
