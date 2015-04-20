@@ -3,8 +3,8 @@ import {Database, IDBKeyRange} from './database'
 import {Model} from './model'
 
 var barn = {
-  database: function(name, version) {
-    return new Database(name, version)
+  database: function(options = {}) {
+    return new Database(options)
   }
 }
 

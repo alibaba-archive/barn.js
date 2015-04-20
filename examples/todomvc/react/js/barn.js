@@ -1,3 +1,48 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+
+var _import = require('../src/barn');
+
+var barn = _interopRequireWildcard(_import);
+
+if (typeof define === 'function' && define.amd) {
+  define([], function () {
+    return barn['default'];
+  });
+} else {
+  window.barn = barn['default'];
+}
+
+},{"../src/barn":2}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _Schema = require('./schema');
+
+var _Database$IDBKeyRange = require('./database');
+
+var _Model = require('./model');
+
+var barn = {
+  database: function database() {
+    var options = arguments[0] === undefined ? {} : arguments[0];
+
+    return new _Database$IDBKeyRange.Database(options);
+  }
+};
+
+barn.Schema = _Schema.Schema;
+barn.IDBKeyRange = _Database$IDBKeyRange.IDBKeyRange;
+
+exports['default'] = barn;
+module.exports = exports['default'];
+
+},{"./database":3,"./model":5,"./schema":6}],3:[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -24,6 +69,10 @@ var Database = (function () {
 
     if (typeof indexedDB == 'undefined') {
       throw new Error('indexedDB is unsupported!');
+      return;
+    }
+    if (typeof options.name == 'undefined') {
+      throw new Error('database name is need');
       return;
     }
     this.name = options.name;
@@ -422,3 +471,246 @@ var Database = (function () {
 })();
 
 exports.Database = Database;
+
+},{"./model":5}],4:[function(require,module,exports){
+'use strict';
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _IDBKeyRange = require('./database');
+
+var Index = (function () {
+  function Index(db, name, indexName) {
+    _classCallCheck(this, Index);
+
+    this.db = db;
+    this.name = name;
+    this.indexName = indexName;
+  }
+
+  _createClass(Index, [{
+    key: 'make',
+    value: function make(keyRange) {
+      var _this = this;
+
+      return {
+        query: function query() {
+          return _this.query(keyRange);
+        },
+        remove: function remove() {
+          return _this.remove(keyRange);
+        }
+      };
+    }
+  }, {
+    key: 'only',
+
+    // keyRange
+    value: function only(value) {
+      var keyRange = _IDBKeyRange.IDBKeyRange.only(value);
+      return this.make(keyRange);
+    }
+  }, {
+    key: 'between',
+    value: function between(start, end, startedOpened, endOpened) {
+      var keyRange = _IDBKeyRange.IDBKeyRange.bound(start, end, startedOpened, endOpened);
+      return this.make(keyRange);
+    }
+  }, {
+    key: 'lt',
+    value: function lt(end, endOpened) {
+      var keyRange = _IDBKeyRange.IDBKeyRange.upperBound(end, endOpened);
+      return this.make(keyRange);
+    }
+  }, {
+    key: 'gt',
+    value: function gt(start, startOpened) {
+      var keyRange = _IDBKeyRange.IDBKeyRange.lowerBound(start, startOpened);
+      return this.make(keyRange);
+    }
+  }, {
+    key: 'query',
+
+    // opt
+    value: function query(keyRange) {
+      return this.db.getByIndex(this.name, this.indexName, keyRange);
+    }
+  }, {
+    key: 'remove',
+    value: function remove(keyRange) {
+      return this.db.removeByIndex(this.name, this.indexName, keyRange);
+    }
+  }]);
+
+  return Index;
+})();
+
+exports.Index = Index;
+
+},{"./database":3}],5:[function(require,module,exports){
+'use strict';
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _Index = require('./index');
+
+var Model = (function () {
+  function Model(schema) {
+    _classCallCheck(this, Model);
+
+    this.schema = schema;
+  }
+
+  _createClass(Model, [{
+    key: 'add',
+
+    // proxy to database
+    value: function add(data) {
+      return this.db.add(this.name, data);
+    }
+  }, {
+    key: 'get',
+    value: function get(id) {
+      return this.db.get(this.name, id);
+    }
+  }, {
+    key: 'getAll',
+    value: function getAll() {
+      return this.db.getAll(this.name);
+    }
+  }, {
+    key: 'getByIndex',
+    value: function getByIndex(keyPath, keyRange) {
+      return this.db.getByIndex(this.name, keyPath, keyRange);
+    }
+  }, {
+    key: 'put',
+    value: function put(data) {
+      return this.db.put(this.name, data);
+    }
+  }, {
+    key: 'remove',
+    value: function remove(id) {
+      return this.db.remove(this.name, id);
+    }
+  }, {
+    key: 'removeByIndex',
+    value: function removeByIndex(keyPath, keyRange) {
+      return this.db.removeByIndex(this.name, keyPath, keyRange);
+    }
+  }, {
+    key: 'count',
+    value: function count(keyOrKeyRange) {
+      return this.db.count(this.name, keyOrKeyRange);
+    }
+  }, {
+    key: 'clear',
+    value: function clear() {
+      return this.db.clear(this.name);
+    }
+  }, {
+    key: 'putBatch',
+
+    //self method
+    value: function putBatch(items) {
+      var _this = this;
+
+      return Promise.all(items.map(function (item) {
+        var primaryKeyValue = item[_this.schema.keyPath];
+
+        if (primaryKeyValue) {
+          return _this.get(primaryKeyValue).then(function (data) {
+            if (data) {
+              return _this.put(Object.assign(data, item));
+            } else {
+              return _this.add(item);
+            }
+          });
+        } else {
+          return _this.add(item);
+        }
+      }));
+    }
+  }, {
+    key: 'removeBatch',
+    value: function removeBatch(items) {
+      var _this2 = this;
+
+      return Promise.all(items.map(function (item) {
+        var primaryKeyValue = item[_this2.schema.keyPath];
+        if (primaryKeyValue) {
+          return _this2.remove(primaryKeyValue);
+        } else {
+          return Promise.resolve('Not Found');
+        }
+      }));
+    }
+  }, {
+    key: 'batch',
+    value: function batch(batches) {
+      var _this3 = this;
+
+      var primaryKeyPath = this.schema.keyPath;
+      return Promise.all(batches.map(function (batch) {
+        return _this3[batch.opt](batch.opt === 'remove' ? batch.value[primaryKeyPath] : batch.value);
+      }));
+    }
+  }, {
+    key: 'index',
+
+    // index
+    value: function index(indexName) {
+      return new _Index.Index(this.db, this.name, indexName);
+    }
+  }]);
+
+  return Model;
+})();
+
+exports.Model = Model;
+
+},{"./index":4}],6:[function(require,module,exports){
+"use strict";
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var Schema = (function () {
+  function Schema() {
+    var options = arguments[0] === undefined ? {} : arguments[0];
+
+    _classCallCheck(this, Schema);
+
+    this.keyPath = options.keyPath;
+    this.indexes = options.indexes || [];
+    this.onUpgrade = options.onUpgrade || this.onUpgrade;
+  }
+
+  _createClass(Schema, [{
+    key: "onUpgrade",
+    value: function onUpgrade() {}
+  }]);
+
+  return Schema;
+})();
+
+exports.Schema = Schema;
+
+},{}]},{},[1])

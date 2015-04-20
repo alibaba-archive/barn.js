@@ -18,38 +18,32 @@ if (typeof define === 'function' && define.amd) {
 },{"../src/barn":2}],2:[function(require,module,exports){
 'use strict';
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
-
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _import = require('./schema');
-
-var Schema = _interopRequireWildcard(_import);
+var _Schema = require('./schema');
 
 var _Database$IDBKeyRange = require('./database');
 
-var _import2 = require('./model');
-
-var Model = _interopRequireWildcard(_import2);
+var _Model = require('./model');
 
 var barn = {
-  database: function database(name, version) {
-    return new _Database$IDBKeyRange.Database(name, version);
+  database: function database() {
+    var options = arguments[0] === undefined ? {} : arguments[0];
+
+    return new _Database$IDBKeyRange.Database(options);
   }
 };
 
-barn.Schema = Schema;
+barn.Schema = _Schema.Schema;
 barn.IDBKeyRange = _Database$IDBKeyRange.IDBKeyRange;
 
 exports['default'] = barn;
 module.exports = exports['default'];
 
-},{"./database":3,"./model":4,"./schema":5}],3:[function(require,module,exports){
+},{"./database":3,"./model":5,"./schema":6}],3:[function(require,module,exports){
 'use strict';
-
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
@@ -59,9 +53,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _import = require('./model');
-
-var Model = _interopRequireWildcard(_import);
+var _Model = require('./model');
 
 var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
@@ -70,11 +62,22 @@ var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDB
 exports.IDBKeyRange = IDBKeyRange;
 
 var Database = (function () {
-  function Database(name, version) {
+  function Database() {
+    var options = arguments[0] === undefined ? {} : arguments[0];
+
     _classCallCheck(this, Database);
 
-    this.name = name;
-    this.version = version || 1;
+    if (typeof indexedDB == 'undefined') {
+      throw new Error('indexedDB is unsupported!');
+      return;
+    }
+    if (typeof options.name == 'undefined') {
+      throw new Error('database name is need');
+      return;
+    }
+    this.name = options.name;
+    this.version = options.version || 1;
+    this.onUpgrade = options.onUpgrade || this.onUpgrade;
     this.models = [];
   }
 
@@ -91,7 +94,7 @@ var Database = (function () {
 
       return model;
     })(function (name, schema) {
-      var model = this.models[name] = new Model(schema);
+      var model = this.models[name] = new _Model.Model(schema);
       model.name = name;
       model.db = this;
       return model;
@@ -119,9 +122,9 @@ var Database = (function () {
             _this.db = event.target.result;
             try {
               if (event.oldVersion === 0) {
-                _this.onCreate();
+                _this.__onCreate();
               } else {
-                _this.onUpgrade(event);
+                _this.__onUpgrade(event);
               }
             } catch (error) {
               reject(error);
@@ -132,13 +135,30 @@ var Database = (function () {
       return this.opened;
     }
   }, {
+    key: 'destroy',
+    value: function destroy() {
+      var _this2 = this;
+
+      return new Promise(function (resolve, reject) {
+        var request = indexedDB.deleteDatabase(_this2.name);
+
+        request.onerror = function (event) {
+          reject(event.currentTarget.error);
+        };
+
+        request.onsuccess = function (event) {
+          resolve('delete success');
+        };
+      });
+    }
+  }, {
     key: 'add',
     value: function add(name, data) {
-      var _this2 = this;
+      var _this3 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this2.db.transaction(name, 'readwrite');
+          var transaction = _this3.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -148,7 +168,7 @@ var Database = (function () {
           var request = store.add(data);
 
           request.onsuccess = function (event) {
-            data[_this2.models[name].schema.keyPath] = request.result;
+            data[_this3.models[name].schema.keyPath] = request.result;
             resolve(data);
           };
 
@@ -161,11 +181,11 @@ var Database = (function () {
   }, {
     key: 'get',
     value: function get(name, id) {
-      var _this3 = this;
+      var _this4 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this3.db.transaction(name, 'readwrite');
+          var transaction = _this4.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -187,11 +207,11 @@ var Database = (function () {
   }, {
     key: 'getAll',
     value: function getAll(name) {
-      var _this4 = this;
+      var _this5 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this4.db.transaction(name, 'readwrite');
+          var transaction = _this5.db.transaction(name, 'readwrite');
           var all = [];
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -219,11 +239,11 @@ var Database = (function () {
   }, {
     key: 'getByIndex',
     value: function getByIndex(name, keyPath, keyRange) {
-      var _this5 = this;
+      var _this6 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this5.db.transaction(name, 'readwrite');
+          var transaction = _this6.db.transaction(name, 'readwrite');
           var all = [];
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -252,11 +272,11 @@ var Database = (function () {
   }, {
     key: 'put',
     value: function put(name, data) {
-      var _this6 = this;
+      var _this7 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this6.db.transaction(name, 'readwrite');
+          var transaction = _this7.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -278,11 +298,11 @@ var Database = (function () {
   }, {
     key: 'remove',
     value: function remove(name, id) {
-      var _this7 = this;
+      var _this8 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this7.db.transaction(name, 'readwrite');
+          var transaction = _this8.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -304,11 +324,11 @@ var Database = (function () {
   }, {
     key: 'removeByIndex',
     value: function removeByIndex(name, keyPath, keyRange) {
-      var _this8 = this;
+      var _this9 = this;
 
       return this.open().then(function () {
         return new Promise(function (resolve, reject) {
-          var transaction = _this8.db.transaction(name, 'readwrite');
+          var transaction = _this9.db.transaction(name, 'readwrite');
 
           transaction.onerror = function (event) {
             reject(event.currentTarget.error);
@@ -335,20 +355,46 @@ var Database = (function () {
       });
     }
   }, {
+    key: 'count',
+    value: function count(name, keyOrKeyRange) {
+      var _this10 = this;
+
+      return this.open().then(function () {
+        return new Promise(function (resolve, reject) {
+          var transaction = _this10.db.transaction(name, 'readonly');
+
+          transaction.onerror = function (event) {
+            reject(event.currentTarget.error);
+          };
+
+          var store = transaction.objectStore(name);
+          var request = store.count(keyOrKeyRange);
+
+          request.onsuccess = function () {
+            resolve(request.result);
+          };
+
+          request.onerror = function (event) {
+            reject(event.currentTarget.error);
+          };
+        });
+      });
+    }
+  }, {
     key: 'clear',
     value: function clear(name) {
-      var _this9 = this;
+      var _this11 = this;
 
       return this.open().then(function () {
         var names = [];
         if (name) {
           names = [name];
         } else {
-          names = Object.keys(_this9.models);
+          names = Object.keys(_this11.models);
         }
         return Promise.all(names.map(function (name) {
           return new Promise(function (resolve, reject) {
-            var transaction = _this9.db.transaction(name, 'readwrite');
+            var transaction = _this11.db.transaction(name, 'readwrite');
 
             transaction.onerror = function (event) {
               reject(event.currentTarget.error);
@@ -369,8 +415,8 @@ var Database = (function () {
       });
     }
   }, {
-    key: 'onCreate',
-    value: function onCreate() {
+    key: '__onCreate',
+    value: function __onCreate() {
       var name, model;
       var store;
       var indexes, index;
@@ -410,8 +456,9 @@ var Database = (function () {
       }
     }
   }, {
-    key: 'onUpgrade',
-    value: function onUpgrade(event) {
+    key: '__onUpgrade',
+    value: function __onUpgrade(event) {
+      this.onUpgrade();
       for (var name in this.models) {
         if (this.models.hasOwnproperty(name)) {
           this.models[name].schema.onUpgrade(event);
@@ -425,10 +472,8 @@ var Database = (function () {
 
 exports.Database = Database;
 
-},{"./model":4}],4:[function(require,module,exports){
+},{"./model":5}],4:[function(require,module,exports){
 'use strict';
-
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
@@ -438,9 +483,88 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _import = require('./database');
+var _IDBKeyRange = require('./database');
 
-var Database = _interopRequireWildcard(_import);
+var Index = (function () {
+  function Index(db, name, indexName) {
+    _classCallCheck(this, Index);
+
+    this.db = db;
+    this.name = name;
+    this.indexName = indexName;
+  }
+
+  _createClass(Index, [{
+    key: 'make',
+    value: function make(keyRange) {
+      var _this = this;
+
+      return {
+        query: function query() {
+          return _this.query(keyRange);
+        },
+        remove: function remove() {
+          return _this.remove(keyRange);
+        }
+      };
+    }
+  }, {
+    key: 'only',
+
+    // keyRange
+    value: function only(value) {
+      var keyRange = _IDBKeyRange.IDBKeyRange.only(value);
+      return this.make(keyRange);
+    }
+  }, {
+    key: 'between',
+    value: function between(start, end, startedOpened, endOpened) {
+      var keyRange = _IDBKeyRange.IDBKeyRange.bound(start, end, startedOpened, endOpened);
+      return this.make(keyRange);
+    }
+  }, {
+    key: 'lt',
+    value: function lt(end, endOpened) {
+      var keyRange = _IDBKeyRange.IDBKeyRange.upperBound(end, endOpened);
+      return this.make(keyRange);
+    }
+  }, {
+    key: 'gt',
+    value: function gt(start, startOpened) {
+      var keyRange = _IDBKeyRange.IDBKeyRange.lowerBound(start, startOpened);
+      return this.make(keyRange);
+    }
+  }, {
+    key: 'query',
+
+    // opt
+    value: function query(keyRange) {
+      return this.db.getByIndex(this.name, this.indexName, keyRange);
+    }
+  }, {
+    key: 'remove',
+    value: function remove(keyRange) {
+      return this.db.removeByIndex(this.name, this.indexName, keyRange);
+    }
+  }]);
+
+  return Index;
+})();
+
+exports.Index = Index;
+
+},{"./database":3}],5:[function(require,module,exports){
+'use strict';
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _Index = require('./index');
 
 var Model = (function () {
   function Model(schema) {
@@ -451,6 +575,8 @@ var Model = (function () {
 
   _createClass(Model, [{
     key: 'add',
+
+    // proxy to database
     value: function add(data) {
       return this.db.add(this.name, data);
     }
@@ -485,19 +611,77 @@ var Model = (function () {
       return this.db.removeByIndex(this.name, keyPath, keyRange);
     }
   }, {
+    key: 'count',
+    value: function count(keyOrKeyRange) {
+      return this.db.count(this.name, keyOrKeyRange);
+    }
+  }, {
     key: 'clear',
     value: function clear() {
       return this.db.clear(this.name);
+    }
+  }, {
+    key: 'putBatch',
+
+    //self method
+    value: function putBatch(items) {
+      var _this = this;
+
+      return Promise.all(items.map(function (item) {
+        var primaryKeyValue = item[_this.schema.keyPath];
+
+        if (primaryKeyValue) {
+          return _this.get(primaryKeyValue).then(function (data) {
+            if (data) {
+              return _this.put(Object.assign(data, item));
+            } else {
+              return _this.add(item);
+            }
+          });
+        } else {
+          return _this.add(item);
+        }
+      }));
+    }
+  }, {
+    key: 'removeBatch',
+    value: function removeBatch(items) {
+      var _this2 = this;
+
+      return Promise.all(items.map(function (item) {
+        var primaryKeyValue = item[_this2.schema.keyPath];
+        if (primaryKeyValue) {
+          return _this2.remove(primaryKeyValue);
+        } else {
+          return Promise.resolve('Not Found');
+        }
+      }));
+    }
+  }, {
+    key: 'batch',
+    value: function batch(batches) {
+      var _this3 = this;
+
+      var primaryKeyPath = this.schema.keyPath;
+      return Promise.all(batches.map(function (batch) {
+        return _this3[batch.opt](batch.opt === 'remove' ? batch.value[primaryKeyPath] : batch.value);
+      }));
+    }
+  }, {
+    key: 'index',
+
+    // index
+    value: function index(indexName) {
+      return new _Index.Index(this.db, this.name, indexName);
     }
   }]);
 
   return Model;
 })();
 
-exports['default'] = Model;
-module.exports = exports['default'];
+exports.Model = Model;
 
-},{"./database":3}],5:[function(require,module,exports){
+},{"./index":4}],6:[function(require,module,exports){
 "use strict";
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
@@ -527,7 +711,6 @@ var Schema = (function () {
   return Schema;
 })();
 
-exports["default"] = Schema;
-module.exports = exports["default"];
+exports.Schema = Schema;
 
 },{}]},{},[1])

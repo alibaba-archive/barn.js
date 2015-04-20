@@ -10,6 +10,10 @@ export class Database {
       throw new Error('indexedDB is unsupported!')
       return
     }
+    if (typeof options.name == 'undefined') {
+      throw new Error('database name is need')
+      return
+    }
     this.name = options.name
     this.version = options.version || 1
     this.onUpgrade = options.onUpgrade || this.onUpgrade
