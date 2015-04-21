@@ -460,7 +460,7 @@ var Database = (function () {
     value: function __onUpgrade(event) {
       this.onUpgrade();
       for (var name in this.models) {
-        if (this.models.hasOwnproperty(name)) {
+        if (this.models.hasOwnProperty(name)) {
           this.models[name].schema.onUpgrade(event);
         }
       }
@@ -574,53 +574,6 @@ var Model = (function () {
   }
 
   _createClass(Model, [{
-    key: 'add',
-
-    // proxy to database
-    value: function add(data) {
-      return this.db.add(this.name, data);
-    }
-  }, {
-    key: 'get',
-    value: function get(id) {
-      return this.db.get(this.name, id);
-    }
-  }, {
-    key: 'getAll',
-    value: function getAll() {
-      return this.db.getAll(this.name);
-    }
-  }, {
-    key: 'getByIndex',
-    value: function getByIndex(keyPath, keyRange) {
-      return this.db.getByIndex(this.name, keyPath, keyRange);
-    }
-  }, {
-    key: 'put',
-    value: function put(data) {
-      return this.db.put(this.name, data);
-    }
-  }, {
-    key: 'remove',
-    value: function remove(id) {
-      return this.db.remove(this.name, id);
-    }
-  }, {
-    key: 'removeByIndex',
-    value: function removeByIndex(keyPath, keyRange) {
-      return this.db.removeByIndex(this.name, keyPath, keyRange);
-    }
-  }, {
-    key: 'count',
-    value: function count(keyOrKeyRange) {
-      return this.db.count(this.name, keyOrKeyRange);
-    }
-  }, {
-    key: 'clear',
-    value: function clear() {
-      return this.db.clear(this.name);
-    }
-  }, {
     key: 'putBatch',
 
     //self method
@@ -680,6 +633,14 @@ var Model = (function () {
 })();
 
 exports.Model = Model;
+
+['add', 'get', 'getAll', 'getByIndex', 'put', 'remove', 'removeByIndex', 'count', 'clear'].forEach(function (name) {
+  Model.prototype[name] = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.unshift(this.name);
+    return this.db[name].apply(this.db, args);
+  };
+});
 
 },{"./index":4}],6:[function(require,module,exports){
 "use strict";

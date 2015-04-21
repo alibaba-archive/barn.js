@@ -7,14 +7,36 @@ var app = app || {};
 (function () {
 	'use strict';
 
+	// var Todo = barn.database({
+	// 	name: 'todomvc',
+	// 	version: 1
+	// }).model('todo', new barn.Schema({
+	// 	keyPath: 'id',
+	// 	indexes: [{
+	// 		name: 'completed',
+	// 		keyPath: 'completed',
+ //      options: {
+ //        unique: false,
+ //        multiEntry: false
+ //      }
+	// 	}]
+	// }))
+
 	var Todo = barn.database({
 		name: 'todomvc',
-		version: 1
+		version: 2
 	}).model('todo', new barn.Schema({
 		keyPath: 'id',
 		indexes: [{
 			name: 'completed',
 			keyPath: 'completed',
+      options: {
+        unique: false,
+        multiEntry: false
+      }
+		}, {
+			name: 'isDeleted',
+			keyPath: 'isDeleted',
       options: {
         unique: false,
         multiEntry: false

@@ -5,35 +5,6 @@ export class Model {
     this.schema = schema
   }
 
-  // proxy to database
-  add(data) {
-    return this.db.add(this.name, data)
-  }
-  get(id) {
-    return this.db.get(this.name, id)
-  }
-  getAll() {
-    return this.db.getAll(this.name)
-  }
-  getByIndex(keyPath, keyRange) {
-    return this.db.getByIndex(this.name, keyPath, keyRange)
-  }
-  put(data) {
-    return this.db.put(this.name, data)
-  }
-  remove(id) {
-    return this.db.remove(this.name, id)
-  }
-  removeByIndex(keyPath, keyRange) {
-    return this.db.removeByIndex(this.name, keyPath, keyRange)
-  }
-  count(keyOrKeyRange) {
-    return this.db.count(this.name, keyOrKeyRange)
-  }
-  clear() {
-    return this.db.clear(this.name)
-  }
-
   //self method
   putBatch(items) {
     return Promise.all(items.map((item) => {
@@ -76,3 +47,15 @@ export class Model {
     return new Index(this.db, this.name, indexName)
   }
 }
+
+[
+  'add', 'get', 'getAll',
+  'getByIndex', 'put', 'remove',
+  'removeByIndex', 'count', 'clear'
+].forEach(function (name) {
+  Model.prototype[name] = function () {
+    var args = Array.prototype.slice.call(arguments)
+    args.unshift(this.name)
+    return this.db[name].apply(this.db, args)
+  }
+})

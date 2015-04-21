@@ -320,7 +320,7 @@ export class Database {
   __onUpgrade (event) {
     this.onUpgrade()
     for (var name in this.models) {
-      if (this.models.hasOwnproperty(name)) {
+      if (this.models.hasOwnProperty(name)) {
         this.models[name].schema.onUpgrade(event)
       } 
     }
