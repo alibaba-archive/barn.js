@@ -4,6 +4,8 @@ var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedD
 var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction
 export var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
 
+var NOOP = function () {}
+
 export class Database {
   constructor(options = {}) {
     if (typeof indexedDB == 'undefined') {
@@ -16,7 +18,7 @@ export class Database {
     }
     this.name = options.name
     this.version = options.version || 1
-    this.onUpgrade = options.onUpgrade || this.onUpgrade
+    this.onUpgrade = options.onUpgrade || NOOP
     this.models = []
   }
   model(name, schema) {

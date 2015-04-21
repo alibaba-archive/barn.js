@@ -41,7 +41,17 @@ var app = app || {};
         unique: false,
         multiEntry: false
       }
-		}]
+		}],
+		onUpgrade: function (event) {
+			var store
+			if (event.oldVersion <= 1) {
+				store = event.db.objectStore('todo')
+				store.createIndex('isDeleted', 'isDeleted', {
+	        unique: false,
+	        multiEntry: false
+	      })
+			}
+		}
 	}))
 
 	var Utils = app.Utils

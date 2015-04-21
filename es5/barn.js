@@ -60,6 +60,7 @@ var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || win
 var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
 
 exports.IDBKeyRange = IDBKeyRange;
+var NOOP = function NOOP() {};
 
 var Database = (function () {
   function Database() {
@@ -77,7 +78,7 @@ var Database = (function () {
     }
     this.name = options.name;
     this.version = options.version || 1;
-    this.onUpgrade = options.onUpgrade || this.onUpgrade;
+    this.onUpgrade = options.onUpgrade || NOOP;
     this.models = [];
   }
 
