@@ -59,6 +59,9 @@ export class Database {
     }
     return this.opened
   }
+  close() {
+    return this.db && this.db.close()
+  }
   destroy() {
     return new Promise((resolve, reject) => {
       var request = indexedDB.deleteDatabase(this.name)
